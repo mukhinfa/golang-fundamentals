@@ -4,15 +4,30 @@ import "fmt"
 
 const fromUSDtoEUR = 0.9
 const fromUSDtoRUB = 88.25
-const fromEURtoRUB = fromUSDtoEUR / fromUSDtoRUB
+
+type currency map[string]map[string]float64
 
 var originalCurrency string
 
 func main() {
+	currency := currency{
+		"USD": {
+			"EUR": fromUSDtoEUR,
+			"RUB": fromUSDtoRUB,
+		},
+		"EUR": {
+			"USD": 1 / fromUSDtoEUR,
+			"RUB": fromUSDtoEUR / fromUSDtoRUB,
+		},
+		"RUB": {
+			"EUR": fromUSDtoRUB / fromUSDtoEUR,
+			"USD": 1 / fromUSDtoRUB,
+		},
+	}
 	originalCurrency = getOriginalCurrency()
 	originalCurrencyValue := getOriginalCurrencyValue()
 	targetCurrency := getTargetCurrency()
-	calculateAmmount(originalCurrencyValue, originalCurrency, targetCurrency)
+	calculateAmmount(originalCurrencyValue, originalCurrency, targetCurrency, currency)
 }
 
 func getOriginalCurrency() string {
@@ -65,27 +80,8 @@ func getTargetCurrency() string {
 	}
 }
 
-func calculateAmmount(originalCurrencyValue float64, originalCurrency, targetCurrency string) {
+func calculateAmmount(originalCurrencyValue float64, originalCurrency, targetCurrency string, currency currency) {
 	var result float64
-	switch {
-	case originalCurrency == "USD":
-		if targetCurrency == "EUR" {
-			result = originalCurrencyValue * fromUSDtoEUR
-		} else {
-			result = originalCurrencyValue * fromUSDtoRUB
-		}
-	case originalCurrency == "EUR":
-		if targetCurrency == "USD" {
-			result = originalCurrencyValue / fromUSDtoEUR
-		} else {
-			result = originalCurrencyValue * fromEURtoRUB
-		}
-	case originalCurrency == "RUB":
-		if targetCurrency == "EUR" {
-			result = originalCurrencyValue / fromEURtoRUB
-		} else {
-			result = originalCurrencyValue / fromUSDtoRUB
-		}
-	}
+	result = originalCurrencyValue * currency[originalCurrency][targetCurrency]
 	fmt.Printf("%.2f %s это %.2f %s", originalCurrencyValue, originalCurrency, result, targetCurrency)
 }
