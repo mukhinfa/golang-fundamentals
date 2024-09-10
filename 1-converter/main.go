@@ -27,7 +27,7 @@ func main() {
 	originalCurrency = getOriginalCurrency()
 	originalCurrencyValue := getOriginalCurrencyValue()
 	targetCurrency := getTargetCurrency()
-	calculateAmmount(originalCurrencyValue, originalCurrency, targetCurrency, currency)
+	calculateAmmount(originalCurrencyValue, originalCurrency, targetCurrency, &currency)
 }
 
 func getOriginalCurrency() string {
@@ -80,8 +80,8 @@ func getTargetCurrency() string {
 	}
 }
 
-func calculateAmmount(originalCurrencyValue float64, originalCurrency, targetCurrency string, currency currency) {
+func calculateAmmount(originalCurrencyValue float64, originalCurrency string, targetCurrency string, currency *currency) {
 	var result float64
-	result = originalCurrencyValue * currency[originalCurrency][targetCurrency]
+	result = originalCurrencyValue * (*currency)[originalCurrency][targetCurrency]
 	fmt.Printf("%.2f %s это %.2f %s", originalCurrencyValue, originalCurrency, result, targetCurrency)
 }
