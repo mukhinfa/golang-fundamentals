@@ -1,6 +1,7 @@
 package bins
 
 import (
+	"encoding/json"
 	"time"
 )
 
@@ -30,4 +31,12 @@ func CreateBinList(bin ...Bin) *BinList {
 		bins: bin,
 	}
 	return newBinList
+}
+
+func (binList *BinList) ToBytes() ([]byte, error) {
+	file, err := json.Marshal(binList)
+	if err != nil {
+		return nil, err
+	}
+	return file, nil
 }
