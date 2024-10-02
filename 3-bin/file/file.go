@@ -7,7 +7,17 @@ import (
 	"strings"
 )
 
-func ReadFile(name string) ([]byte, error) {
+type JsonDb struct {
+	filename string
+}
+
+func NewJsonDB(name string) *JsonDb {
+	return &JsonDb{
+		filename: name,
+	}
+}
+
+func (db *JsonDb) Read(name string) ([]byte, error) {
 	if !strings.HasSuffix(name, ".json") {
 		error := fmt.Errorf("Файл должен быть \".json\"")
 		return nil, error
@@ -20,7 +30,7 @@ func ReadFile(name string) ([]byte, error) {
 	return data, nil
 }
 
-func WriteFile(content []byte, name string) {
+func (db *JsonDb) Write(content []byte, name string) {
 	file, err := os.Create(name)
 	if err != nil {
 		fmt.Println(err)
