@@ -3,11 +3,26 @@ package storage
 import (
 	"encoding/json"
 	"golang_fundamentals/3-bin/bins"
-	"golang_fundamentals/3-bin/file"
 )
 
-func ReadBin(name string) (*bins.BinList, error) {
-	file, err := file.ReadFile(name)
+type StorageDb struct {
+	name string
+	db   FileDb
+}
+
+func newStorageDb(name string) *StorageDb {
+	return &StorageDb{
+		name: name,
+	}
+}
+
+type FileDb interface {
+	Read() ([]byte, error)
+	Write(content []byte)
+}
+
+func (db *StorageDb) ReadBin(name string) (*bins.BinList, error) {
+	file, err := db.db.Read()
 	if err != nil {
 		return nil, err
 	}
@@ -16,10 +31,10 @@ func ReadBin(name string) (*bins.BinList, error) {
 	return &binList, nil
 }
 
-func SaveBin(binList bins.BinList) {
+func (db *StorageDb) Save(binList bins.BinList) {
 	data, err := binList.ToBytes()
 	if err != nil {
 		return
 	}
-	file.WriteFile(data, "data.json")
+	db.db.Write(data)
 }

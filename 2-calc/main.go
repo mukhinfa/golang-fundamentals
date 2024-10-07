@@ -9,18 +9,17 @@ import (
 	"strings"
 )
 
+var menu = map[string]func([]int){
+	"AVG": calculateAverage,
+	"SUM": calculateSum,
+	"MED": calculateMedian,
+}
+
 func main() {
 	values := getValues()
 	operation := getOperation()
-
-	switch {
-	case operation == "AVG":
-		calculateAverage(values)
-	case operation == "SUM":
-		calculateSum(values)
-	case operation == "MED":
-		calculateMedian(values)
-	}
+	menuFunc := menu[operation]
+	menuFunc(values)
 }
 
 func getOperation() string {
