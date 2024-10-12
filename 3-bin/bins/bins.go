@@ -2,33 +2,34 @@ package bins
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 )
 
 type Bin struct {
-	id        string
-	private   bool
-	createdAt time.Time
-	name      string
+	Id        string    `json:"id"`
+	Private   bool      `json:"private"`
+	CreatedAt time.Time `json:"createdAt"`
+	Name      string    `json:"name"`
 }
 
 type BinList struct {
-	bins []Bin
+	Bins []Bin `json:"bins"`
 }
 
 func CreateBin(id, name string, private bool) *Bin {
 	newBin := &Bin{
-		id:        id,
-		private:   private,
-		createdAt: time.Now(),
-		name:      name,
+		Id:        id,
+		Private:   private,
+		CreatedAt: time.Now(),
+		Name:      name,
 	}
 	return newBin
 }
 
 func CreateBinList(bin ...Bin) *BinList {
 	newBinList := &BinList{
-		bins: bin,
+		Bins: bin,
 	}
 	return newBinList
 }
@@ -36,6 +37,7 @@ func CreateBinList(bin ...Bin) *BinList {
 func (binList *BinList) ToBytes() ([]byte, error) {
 	file, err := json.Marshal(binList)
 	if err != nil {
+		fmt.Println("Ошибка маршаллинга")
 		return nil, err
 	}
 	return file, nil

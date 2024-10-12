@@ -1,1 +1,6 @@
 ﻿.vscode
+*.env*
+3-bin/binList.json
+3-bin/binStorage/*.json
+
+*.env

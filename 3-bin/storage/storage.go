@@ -2,17 +2,27 @@ package storage
 
 import (
 	"encoding/json"
+	"fmt"
+	"os"
+
 	"golang_fundamentals/3-bin/bins"
 )
 
-type StorageDb struct {
+type Storage struct {
 	name string
-	db   FileDb
 }
 
-func newStorageDb(name string) *StorageDb {
+type StorageDb struct {
+	Storage
+	FileDb
+}
+
+func NewStorageDb(name string, db FileDb) *StorageDb {
 	return &StorageDb{
-		name: name,
+		Storage: Storage{
+			name: name,
+		},
+		FileDb: db,
 	}
 }
 
@@ -21,20 +31,27 @@ type FileDb interface {
 	Write(content []byte)
 }
 
-func (db *StorageDb) ReadBin(name string) (*bins.BinList, error) {
-	file, err := db.db.Read()
+func (db *StorageDb) Read() (*bins.BinList, error) {
+	file, err := os.ReadFile(db.name)
 	if err != nil {
+		fmt.Println("Ошибка чтения файла")
 		return nil, err
 	}
 	var binList bins.BinList
 	err = json.Unmarshal(file, &binList)
+	if err != nil {
+		fmt.Println("Ошибка анмаршаллинга")
+		return nil, err
+	}
 	return &binList, nil
 }
 
-func (db *StorageDb) Save(binList bins.BinList) {
+func (db *StorageDb) Save(binList bins.BinList) error {
 	data, err := binList.ToBytes()
 	if err != nil {
-		return
+		fmt.Println("Ошибка перехода в байты")
+		return err
 	}
-	db.db.Write(data)
+	db.Write(data)
+	return nil
 }
